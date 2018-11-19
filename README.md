@@ -1,5 +1,5 @@
 # Movable
-* Make the element be movable anywhere.
+* Simply Preview Image
 
 ## Compatible
 - Chrome
@@ -7,16 +7,16 @@
 
 ## How to
 * 1 NPM
+* 2 script
 
 ```
-import Movable from '@zcorky/movable';
+// NPM
+import '@zcorky/previewer';
 
-new Movable({
-  handler: '.handler', // handler selector, default ".handler";
-  container: '.container', // container select, default ".container"; if container doesnot exist, it will use handler as container.
-  boundable: true, // enable boundary, default false, which means you can move anywhere;
-});
+// script
+// build first
+<script src="path/to/previewer.min.js"></script>
 ```
 
 ## 更新日志
-[CHANGELOG.md](https://github.com/zcorky/movable/blob/master/CHANGELOG.md)
+[CHANGELOG.md](https://github.com/zcorky/previewer/blob/master/CHANGELOG.md)
