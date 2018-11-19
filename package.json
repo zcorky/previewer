@@ -13,10 +13,10 @@
     "build:self": "rollup -c config/rollup.config.js",
     "build:esm": "rollup -c config/rollup.config.esm.js",
     "build:umd": "rollup -c config/rollup.config.umd.js",
-    "build": "npm run clean && npm run build:self && npm run build:esm &&  npm run build:umd",
+    "build": "npm run clean && npm run build:self && npm run build:esm &&  npm run build:umd && npm run build:example",
     "test": "npm run lint && mocha -R spec --compilers js:babel-register",
     "release": "npm run test && git commit -am $npm_package_version && git tag $npm_package_version && git push origin master && git push --tags",
-    "deploy": "npm run build && gh-pages -d example"
+    "deploy": "npm run build && gh-pages -d example/dist"
   },
   "author": "zcorky",
   "license": "MIT",

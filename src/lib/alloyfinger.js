@@ -2,7 +2,7 @@
  * By dntzhang
  * Github: https://github.com/AlloyTeam/AlloyFinger
  */
-; (function () {
+// ; (function () {
   function getLen(v) {
       return Math.sqrt(v.x * v.x + v.y * v.y);
   }
@@ -327,9 +327,11 @@
       }
   };
 
-  if (typeof module !== 'undefined' && typeof exports === 'object') {
-      module.exports = AlloyFinger;
-  } else {
-      window.AlloyFinger = AlloyFinger;
-  }
-})();
+export default AlloyFinger;
+
+//   if (typeof module !== 'undefined' && typeof exports === 'object') {
+//       module.exports = AlloyFinger;
+//   } else {
+//       window.AlloyFinger = AlloyFinger;
+//   }
+// })();

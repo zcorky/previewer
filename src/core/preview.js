@@ -1,10 +1,14 @@
+import AlloyFinger from '../lib/alloyfinger';
+import Transform from '../lib/transform';
+import To from '../lib/to';
+
 import { $, setStyles, setStyle } from './utils/dom';
 import { addEvents, removeEvents } from './utils/event';
 import { maxImage, ease, createBodyScrollable } from './utils/utils';
 
-const AlloyFinger = require('../lib/alloyfinger');
-const Transform = require('../lib/transform');
-const To = require('../lib/to');
+// const AlloyFinger = require('../lib/alloyfinger');
+// const Transform = require('../lib/transform');
+// const To = require('../lib/to');
 
 export class Previewer {
   previewing = false;
@@ -214,18 +218,29 @@ export class Previewer {
     const { $box, $image: $imageContainer } = this.getContainer();
     this.bodyScroll.disable();
 
-    this.loadImage(src, loadedSrc => {
-      $imageContainer.setAttribute('src', loadedSrc);
-
-      const { max, auto } = maxImage($image);
-      setStyles($box, {
-        display: 'flex',
-      });
-      setStyles($imageContainer, {
-        [max]: '100%',
-        [auto]: 'auto',
-      });
+    setStyles($box, {
+      display: 'flex',
     });
+
+    // @sync
+    $imageContainer.setAttribute('src', src);
+
+    const { max, auto } = maxImage($image);
+    setStyles($imageContainer, {
+      [max]: '100%',
+      [auto]: 'auto',
+    });
+  
+    // @async
+    // this.loadImage(src, loadedSrc => {
+    //   $imageContainer.setAttribute('src', loadedSrc);
+
+    //   const { max, auto } = maxImage($image);
+    //   setStyles($imageContainer, {
+    //     [max]: '100%',
+    //     [auto]: 'auto',
+    //   });
+    // });
   }
 
   unpreview = () => {
