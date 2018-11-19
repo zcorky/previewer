@@ -67,4 +67,6 @@ To.reset=function(el, property, value) {
   el[property] = value;
 }
 
-export default To;
+// export default To;
+
+module.exports = To;

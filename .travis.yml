@@ -1,0 +1,36 @@
+language: node_js
+node_js:
+  - "10"
+  - "8"
+
+jobs:
+  include:
+    - stage: deploy
+      before_script:
+        - git config --global user.name 'whatwewant'
+        - git config --global user.email 'tobewhatwewant@gmail.com'
+        - git clone --branch gh-pages https://github.com/$TRAVIS_REPO_SLUG gh-pages
+      script:
+        - echo "build for deploy gh-pages"
+        - npm run build
+      deploy:
+        # deploy to gh-pages
+        # Need env
+        #   GITHUB_TOKEN
+        provider: script
+        skip_cleanup: true
+        script: bash scripts/deploy.sh
+        on:
+          tags: true
+    - stage: deploy
+      script:
+        - echo "build for deploy npm"
+        - npm run build
+      deploy:
+        # deploy to npm === npm publish
+        provider: npm
+        email: uniquecolesmith@gmail.com
+        skip_cleanup: true
+        api_key: $NPM_AUTH_TOKEN
+        on:
+          tags: true

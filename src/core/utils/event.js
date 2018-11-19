@@ -1,3 +1,10 @@
+import isSupportPassive from './isSupportPassive';
+
+const passiveOptions = isSupportPassive() ? {
+  passive: true,
+  capture: false,
+} : false;
+
 const NOOP = () => null;
 
 export function addEvent($node, name, handler) {
@@ -6,7 +13,11 @@ export function addEvent($node, name, handler) {
     return ;
   }
 
-  $node.addEventListener(name, handler);
+  $node.addEventListener(name, handler, passiveOptions);
+}
+
+export function removeEvent($node, name, handler) {
+  $node.removeEventListener(name, handler, passiveOptions);
 }
 
 /**
@@ -19,19 +30,23 @@ export function addEvents($node, names = [], handler = NOOP) {
   names.forEach(name => addEvent($node, name, handler));
 }
 
+export function removeEvents($node, names = [], handler = NOOP) {
+  names.forEach(name => removeEvent($node, name, handler));
+}
+
 export function onTap($node, callback) {
   let timeout = null;
   let lock = false;
   
-  $node.addEventListener('touchstart', () => {
+  addEvent($node, 'touchstart', () => {
     timeout = Date.now();
   });
 
-  $node.addEventListener('touchmove', () => {
+  addEvent($node, 'touchmove', () => {
     lock = true;
   });
 
-  $node.addEventListener('touchend', function (event) {
+  addEvent($node, 'touchend', function (event) {
     if (lock) {
       lock = false;
       return false;

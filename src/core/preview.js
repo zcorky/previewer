@@ -1,10 +1,10 @@
-import AlloyFinger from '../lib/alloyfinger';
-import Transform from '../lib/transform';
-import To from '../lib/to';
-
 import { $, setStyles, setStyle } from './utils/dom';
-import { addEvents } from './utils/event';
+import { addEvents, removeEvents } from './utils/event';
 import { maxImage, ease, createBodyScrollable } from './utils/utils';
+
+const AlloyFinger = require('../lib/alloyfinger');
+const Transform = require('../lib/transform');
+const To = require('../lib/to');
 
 export class Previewer {
   previewing = false;
@@ -67,12 +67,30 @@ export class Previewer {
           opacity: 0;
         }
       }
+
+      div[${name}="true"] img {
+        position: relative;
+      }
+
+      div[${name}="true"] img:after {
+        content: "...";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0);
+      }
     `;
     $container.prepend($style);
 
     const $imageContainer = this.$imageContainer = document.createElement('img');
-    $imageContainer.setAttribute('src', 'https://gpic.qpic.cn/gbar_pic/rqlh3lfegUYAvWGGNA8wyC5kly2PwLzONQsSatcxicqJOw0gz9MGmZg/1000');
+    // $imageContainer.setAttribute('src', 'https://gpic.qpic.cn/gbar_pic/rqlh3lfegUYAvWGGNA8wyC5kly2PwLzONQsSatcxicqJOw0gz9MGmZg/1000');
     $imageContainer.setAttribute('rate', window.innerHeight / window.innerWidth);
+    setStyles($imageContainer, {
+      width: '100%',
+      // height: 200,
+      // backgroundColor: 'rgba(255, 255, 255, 0.78)',
+      border: 'none',
+    });
     this.createAlloyFinger($imageContainer);
     $container.appendChild($imageContainer);
     // @for PC
@@ -166,6 +184,14 @@ export class Previewer {
     });
   }
 
+  loadImage = (src, callback) => {
+    const image = new Image();
+    image.src = src;
+    image.onload = () => {
+      callback(src);
+    };
+  }
+
   togglePreview = ($image, src) => {
     if (this.lastPreviewedAt) {
       const delta = Date.now() - this.lastPreviewedAt;
@@ -184,37 +210,42 @@ export class Previewer {
   }
 
   preview = ($image, src) => {
-    const { $box, $image: $imageContainer } = this.getContainer();
     this.previewing = true;
+    const { $box, $image: $imageContainer } = this.getContainer();
     this.bodyScroll.disable();
 
-    $imageContainer.setAttribute('src', src);
+    this.loadImage(src, loadedSrc => {
+      $imageContainer.setAttribute('src', loadedSrc);
 
-    const { max, auto } = maxImage($image);
-    setStyles($box, {
-      display: 'flex',
-    });
-    setStyles($imageContainer, {
-      [max]: '100%',
-      [auto]: 'auto',
+      const { max, auto } = maxImage($image);
+      setStyles($box, {
+        display: 'flex',
+      });
+      setStyles($imageContainer, {
+        [max]: '100%',
+        [auto]: 'auto',
+      });
     });
   }
 
   unpreview = () => {
-    const { $box } = this.getContainer();
     this.previewing = false;
+    const { $box } = this.getContainer();
     this.bodyScroll.enable();
     this.reset();
     
     setStyle($box, 'animation-name', 'easehide');
-    addEvents($box, ['animationend'], () => {
+    const handleEaseHide = () => {
       if ($box.style['animation-name'] === 'easehide') {
         setStyles($box, {
           display: 'none',
           'animation-name': 'easeshow',
         });
       }
-    });
+
+      removeEvents($box, ['animationend', handleEaseHide]);
+    };
+    addEvents($box, ['animationend'], handleEaseHide);
   }
 
   zoom = (scale) => {

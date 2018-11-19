@@ -1,0 +1,54 @@
+{
+  "name": "@zcorky/previewer",
+  "version": "0.0.1",
+  "description": "Simply image preview.",
+  "main": "lib/index.js",
+  "jsnext:main": "lib/index.esm.js",
+  "module": "lib/index.esm.js",
+  "scripts": {
+    "clean": "rm -rf ./lib",
+    "lint": "eslint src",
+    "copy": "cp -rf lib example",
+    "build:example": "cd example && umi build",
+    "build:self": "rollup -c config/rollup.config.js",
+    "build:esm": "rollup -c config/rollup.config.esm.js",
+    "build:umd": "rollup -c config/rollup.config.umd.js",
+    "build": "npm run clean && npm run build:self && npm run build:esm &&  npm run build:umd",
+    "test": "npm run lint && mocha -R spec --compilers js:babel-register",
+    "release": "npm run test && git commit -am $npm_package_version && git tag $npm_package_version && git push origin master && git push --tags",
+    "deploy": "npm run build && gh-pages -d example"
+  },
+  "author": "zcorky",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zcorky/previewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zcorky/previewer/issues"
+  },
+  "devDependencies": {
+    "babel-core": "6.26.0",
+    "babel-eslint": "^8.2.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-runtime": "6.23.0",
+    "babel-preset-env": "1.6.1",
+    "chai": "^4.1.2",
+    "es5-shim": "4.5.10",
+    "eslint": "4.18.2",
+    "expect.js": "0.3.1",
+    "gh-pages": "^2.0.1",
+    "mocha": "3.5.3",
+    "rollup": "0.57.1",
+    "rollup-plugin-babel": "3.0.3",
+    "rollup-plugin-commonjs": "8.3.0",
+    "rollup-plugin-node-resolve": "3.0.3",
+    "rollup-plugin-uglify": "^3.0.0"
+  },
+  "dependencies": {
+    "babel-runtime": "6.26.0"
+  },
+  "files": [
+    "lib"
+  ]
+}

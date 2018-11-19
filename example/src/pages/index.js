@@ -1,9 +1,10 @@
 import styles from './index.css';
 
-import Previewer from '../../../src/core/index';
-import '../utils/debug';
+// import Previewer from '../../../src/core/index';
+import '../../../src/';
+// import '../utils/debug';
 
-new Previewer();
+// new Previewer();
 
 export default function() {
   return (
