@@ -1,3 +1,3 @@
 import { Previewer } from './preview';
 
-new Previewer().render();
+export default Previewer;

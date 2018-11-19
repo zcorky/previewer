@@ -17,6 +17,20 @@ export function maxImage($img) {
   }
 }
 
+// export function maxImage(width, height) {
+//   if (width >= height) {
+//     return {
+//       auto: 'height',
+//       max: 'width',
+//     };
+//   } else {
+//     return {
+//       auto: 'width',
+//       max: 'height',
+//     };
+//   }
+// }
+
 export function ease(x) {
   return Math.sqrt(1 - Math.pow(x - 1, 2));
 }

@@ -10,6 +10,10 @@ export class Previewer {
   previewing = false;
   lastPreviewedAt = null;
 
+  constructor() {
+    this.render();
+  }
+
   getElement = (selector) => {
     return $(selector);
   }
@@ -169,7 +173,7 @@ export class Previewer {
         return false;
       }
     }
-
+    
     this.lastPreviewedAt = Date.now();
   
     if (!this.previewing && $image && src) {
