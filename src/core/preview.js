@@ -98,7 +98,7 @@ export class Previewer {
     this.createAlloyFinger($imageContainer);
     $container.appendChild($imageContainer);
     // @for PC
-    // addEvents($imageContainer, ['click'], this.togglePreview);
+    addEvents($imageContainer, ['click'], this.togglePreview);
 
     const $maskContainer = this.$maskContainer = document.createElement('div');
     $maskContainer.setAttribute('data-mask', 'true');
@@ -186,6 +186,8 @@ export class Previewer {
         evt.preventDefault();
       },
     });
+
+    return af;
   }
 
   loadImage = (src, callback) => {
@@ -268,15 +270,15 @@ export class Previewer {
 
     To.stopAll();
     if ($imageContainer.scaleX > 1.5) {
-        new To($imageContainer, "scaleX", 1, 500, ease);
-        new To($imageContainer, "scaleY", 1, 500, ease);
-        new To($imageContainer, "translateX", 0, 500, ease);
-        new To($imageContainer, "translateY", 0, 500, ease);
+      new To($imageContainer, 'scaleX', 1, 500, ease);
+      new To($imageContainer, 'scaleY', 1, 500, ease);
+      new To($imageContainer, 'translateX', 0, 500, ease);
+      new To($imageContainer, 'translateY', 0, 500, ease);
     } else {
-        new To($imageContainer, "scaleX", scale, 500, ease);
-        new To($imageContainer, "scaleY", scale, 500, ease);
-        new To($imageContainer, "translateX", 0, 500, ease);
-        new To($imageContainer, "translateY", 0, 500, ease);
+      new To($imageContainer, 'scaleX', scale, 500, ease);
+      new To($imageContainer, 'scaleY', scale, 500, ease);
+      new To($imageContainer, 'translateX', 0, 500, ease);
+      new To($imageContainer, 'translateY', 0, 500, ease);
     }
   }
 
@@ -296,7 +298,7 @@ export class Previewer {
           && translateX + deltaX >= rangeRight
           && translateY + deltaY <= rangeUp
           && translateY + deltaY >= rangeDown ) {
-          return true;
+        return true;
       }
     }
 
@@ -311,24 +313,23 @@ export class Previewer {
     if ($imageContainer.scaleX !== 1
       || $imageContainer.scaleY !== 1
       || $imageContainer.translateX !== 0
-      || $imageContainer.translateY !== 0
-      ) {
-        new To($imageContainer, 'scaleX', 1, 500, ease);
-        new To($imageContainer, 'scaleY', 1, 500, ease);
-        new To($imageContainer, 'translateX', 0, 500, ease);
-        new To($imageContainer, 'translateY', 0, 500, ease);
-        new To($imageContainer, 'rotateX', 0, 500, ease);
-        new To($imageContainer, 'rotateY', 0, 500, ease);
-      } else {
-        setTimeout(() => {
-          To.reset($imageContainer, 'scaleX', 1);
-          To.reset($imageContainer, 'scaleY', 1);
-          To.reset($imageContainer, 'translateX', 0);
-          To.reset($imageContainer, 'translateY', 0);
-          To.reset($imageContainer, 'rotateX', 0);
-          To.reset($imageContainer, 'rotateY', 0);
-        }, 250);
-      }
+      || $imageContainer.translateY !== 0) {
+      new To($imageContainer, 'scaleX', 1, 500, ease);
+      new To($imageContainer, 'scaleY', 1, 500, ease);
+      new To($imageContainer, 'translateX', 0, 500, ease);
+      new To($imageContainer, 'translateY', 0, 500, ease);
+      new To($imageContainer, 'rotateX', 0, 500, ease);
+      new To($imageContainer, 'rotateY', 0, 500, ease);
+    } else {
+      setTimeout(() => {
+        To.reset($imageContainer, 'scaleX', 1);
+        To.reset($imageContainer, 'scaleY', 1);
+        To.reset($imageContainer, 'translateX', 0);
+        To.reset($imageContainer, 'translateY', 0);
+        To.reset($imageContainer, 'rotateX', 0);
+        To.reset($imageContainer, 'rotateY', 0);
+      }, 250);
+    }
   }
 
   render() {

@@ -46,4 +46,4 @@ export function createBodyScrollable() {
       setStyle(document.body, 'overflow', 'hidden');
     },
   };
-};
+}

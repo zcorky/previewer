@@ -2,8 +2,10 @@
 echo "deploy to gh-pages."
 echo "current repo: $TRAVIS_REPO_SLUG tag: $TRAVIS_TAG"
 
+# Custom Files
 cp -rf lib gh-pages
-cp -rf example/dist/* gh-pages
+cp -rf example/demo.html gh-pages
+
 cd gh-pages
 git add --all .
 git commit -a -m ":sparkles:(TravisCI) automatically update from travis_ci (version: $TRAVIS_TAG)"

@@ -16,3 +16,5 @@ try {
 export default function isSupportPassive() {
   return isSupport;
 }
+
+console.log('isSupportPassive: ', isSupportPassive());
