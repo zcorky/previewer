@@ -4,7 +4,7 @@ echo "current repo: $TRAVIS_REPO_SLUG tag: $TRAVIS_TAG"
 
 # Custom Files
 cp -rf lib gh-pages
-cp -rf example/demo.html gh-pages
+cp -rf example/demo.html gh-pages/index.html
 
 cd gh-pages
 git add --all .
