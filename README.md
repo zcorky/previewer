@@ -13,8 +13,7 @@
 // NPM
 import '@zcorky/previewer';
 
-// script
-// build first
+// CDN
 <script src="https://unpkg.com/@zcorky/previewer/lib/index.umd.js"></script>
 ```
 
