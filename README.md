@@ -15,7 +15,7 @@ import '@zcorky/previewer';
 
 // script
 // build first
-<script src="path/to/previewer.min.js"></script>
+<script src="https://unpkg.com/@zcorky/previewer/lib/index.umd.js"></script>
 ```
 
 ## 更新日志
