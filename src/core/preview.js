@@ -5,6 +5,7 @@ import To from '../lib/to';
 import { $, setStyles, setStyle } from './utils/dom';
 import { addEvents, removeEvents } from './utils/event';
 import { maxImage, ease, createBodyScrollable } from './utils/utils';
+import { createLoading } from './utils/loading';
 
 // const AlloyFinger = require('../lib/alloyfinger');
 // const Transform = require('../lib/transform');
@@ -34,6 +35,7 @@ export class Previewer {
       };
     }
 
+    // @1 $container
     $container = this.$container = document.createElement('div');
     $container.setAttribute(name, 'true');
     setStyles($container, {
@@ -51,6 +53,7 @@ export class Previewer {
       alignItems: 'center',
     });
 
+    // @2 $style
     const $style = document.createElement('style');
     $style.innerHTML = `
       @keyframes easeshow {
@@ -86,6 +89,7 @@ export class Previewer {
     `;
     $container.prepend($style);
 
+    // @3 $imageContainer
     const $imageContainer = this.$imageContainer = document.createElement('img');
     // $imageContainer.setAttribute('src', 'https://gpic.qpic.cn/gbar_pic/rqlh3lfegUYAvWGGNA8wyC5kly2PwLzONQsSatcxicqJOw0gz9MGmZg/1000');
     $imageContainer.setAttribute('rate', window.innerHeight / window.innerWidth);
@@ -98,8 +102,10 @@ export class Previewer {
     this.createAlloyFinger($imageContainer);
     $container.appendChild($imageContainer);
     // @for PC
-    addEvents($imageContainer, ['click'], this.togglePreview);
+    // @TODO bug for mobile, we donot expect it run on mobile
+    // addEvents($imageContainer, ['click'], this.togglePreview);
 
+    // @4 $maskContainer
     const $maskContainer = this.$maskContainer = document.createElement('div');
     $maskContainer.setAttribute('data-mask', 'true');
     setStyles($maskContainer, {
@@ -113,6 +119,11 @@ export class Previewer {
       '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0)',
     });
     $container.prepend($maskContainer);
+
+    // @5 $loadingContainer
+    const $loadingContainer = createLoading();
+    $container.appendChild($loadingContainer);
+
 
     addEvents($maskContainer, ['click', 'tap'], this.togglePreview);
     document.body.appendChild($container);
@@ -224,25 +235,29 @@ export class Previewer {
       display: 'flex',
     });
 
-    // @sync
-    $imageContainer.setAttribute('src', src);
+    // @reset last image
+    console.log('reset src');
+    $imageContainer.setAttribute('src', '');
 
-    const { max, auto } = maxImage($image);
-    setStyles($imageContainer, {
-      [max]: '100%',
-      [auto]: 'auto',
-    });
+    // @sync
+    // $imageContainer.setAttribute('src', src);
+
+    // const { max, auto } = maxImage($image);
+    // setStyles($imageContainer, {
+    //   [max]: '100%',
+    //   [auto]: 'auto',
+    // });
   
     // @async
-    // this.loadImage(src, loadedSrc => {
-    //   $imageContainer.setAttribute('src', loadedSrc);
+    this.loadImage(src, loadedSrc => {
+      $imageContainer.setAttribute('src', loadedSrc);
 
-    //   const { max, auto } = maxImage($image);
-    //   setStyles($imageContainer, {
-    //     [max]: '100%',
-    //     [auto]: 'auto',
-    //   });
-    // });
+      const { max, auto } = maxImage($image);
+      setStyles($imageContainer, {
+        [max]: '100%',
+        [auto]: 'auto',
+      });
+    });
   }
 
   unpreview = () => {
