@@ -1,9 +1,13 @@
+import {
+  $,
+  setStyle, setStyles,
+  addEvents, removeEvents,
+} from '@zcorky/dom';
+
 import AlloyFinger from '../lib/alloyfinger';
 import Transform from '../lib/transform';
 import To from '../lib/to';
 
-import { $, setStyles, setStyle } from './utils/dom';
-import { addEvents, removeEvents } from './utils/event';
 import { maxImage, ease, createBodyScrollable } from './utils/utils';
 import { createLoading } from './utils/loading';
 

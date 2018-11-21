@@ -1,4 +1,4 @@
-import { setStyle } from './dom';
+import { setStyle } from '@zcorky/dom';
 
 export function maxImage($img) {
   const width = $img.width;

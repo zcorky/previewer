@@ -1,8 +1,11 @@
-import isSupportPassive from './isSupportPassive';
-import { $, setStyle } from './dom';
-import assert from './assert';
-import { addEvent } from './event';
-import getClientXY from './getClientXY';
+import {
+  $,
+  isSupportPassive,
+  setStyle,
+  addEvent,
+  getClientXY,
+} from '@zcorky/dom';
+import { assert } from './assert';
 
 export {
   isSupportPassive,
