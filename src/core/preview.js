@@ -36,6 +36,7 @@ export class Previewer {
         $box: this.$container,
         $image: this.$imageContainer,
         $mask: this.$maskContainer,
+        $loading: this.$loading,
       };
     }
 
@@ -125,7 +126,7 @@ export class Previewer {
     $container.prepend($maskContainer);
 
     // @5 $loadingContainer
-    const $loadingContainer = createLoading();
+    const $loadingContainer = this.$loading = createLoading();
     $container.appendChild($loadingContainer);
 
 
@@ -136,6 +137,7 @@ export class Previewer {
       $box: $container,
       $image: $imageContainer,
       $mask: $maskContainer,
+      $loading: $loadingContainer,
     };
   }
 
@@ -232,7 +234,7 @@ export class Previewer {
 
   preview = ($image, src) => {
     this.previewing = true;
-    const { $box, $image: $imageContainer } = this.getContainer();
+    const { $box, $image: $imageContainer, $loading } = this.getContainer();
     this.bodyScroll.disable();
 
     setStyles($box, {
@@ -240,8 +242,10 @@ export class Previewer {
     });
 
     // @reset last image
-    console.log('reset src');
     $imageContainer.setAttribute('src', '');
+    setStyles($loading, {
+      display: 'block',
+    });
 
     // @sync
     // $imageContainer.setAttribute('src', src);
@@ -260,6 +264,9 @@ export class Previewer {
       setStyles($imageContainer, {
         [max]: '100%',
         [auto]: 'auto',
+      });
+      setStyles($loading, {
+        display: 'none',
       });
     });
   }
