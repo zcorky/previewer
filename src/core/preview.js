@@ -1,6 +1,6 @@
 import {
   $,
-  setStyle, setStyles,
+  setStyles,
   addEvents, removeEvents,
 } from '@zcorky/dom';
 
@@ -226,22 +226,25 @@ export class Previewer {
     };
   }
 
-  togglePreview = ($image, src) => {
+  togglePreview = (options) => {
     if (this.lastPreviewedAt && Date.now() - this.lastPreviewedAt < 300) {
       this.lastPreviewedAt = Date.now();
       return false;
     }
-    
+
     this.lastPreviewedAt = Date.now();
-  
-    if (!this.previewing && $image && src) {
-      this.preview($image, src);
+
+    if (!this.previewing && options) { // if options undefine, this maybe call from unpreview
+      this.preview(options);
     } else {
       this.unpreview();
     }
   }
 
-  preview = ($image, src) => {
+  preview = (options) => {
+    if (!options) return alert('preview with no options, it needs { styles, source }');
+
+    const { styles, source } = options || {};
     this.previewing = true;
     const { $box, $image: $imageContainer, $loading } = this.getContainer();
     this.bodyScroll.disable();
@@ -266,14 +269,9 @@ export class Previewer {
     // });
   
     // @async
-    this.loadImage(src, loadedSrc => {
+    this.loadImage(source, loadedSrc => {
       $imageContainer.setAttribute('src', loadedSrc);
-
-      const { max, auto } = maxImage($image);
-      setStyles($imageContainer, {
-        [max]: '100%',
-        [auto]: 'auto',
-      });
+      setStyles($imageContainer, styles);
       setStyles($loading, {
         display: 'none',
       });
@@ -286,7 +284,9 @@ export class Previewer {
     this.bodyScroll.enable();
     this.reset();
     
-    setStyle($box, 'animation-name', 'easehide');
+    setStyles($box, {
+      'animation-name': 'easehide',
+    });
     const handleEaseHide = () => {
       if ($box.style['animation-name'] === 'easehide') {
         setStyles($box, {
@@ -373,10 +373,20 @@ export class Previewer {
     const handler = event => {
       const $element = event.target;
       if (!$element.hasAttribute('data-preview')) return false;
-      const image = $element.src;
-      if (!image) return false;
+      const regular = $element.src;
+      if (!regular) return false;
 
-      this.togglePreview($element, image);
+      const { max, auto } = maxImage($element);
+      const hd = $element.getAttribute('data-hd'); // support hd image
+
+      this.togglePreview({
+        styles: {
+          // detect width/height, which is bigger, then set 100%
+          [max]: '100%', 
+          [auto]: 'auto',
+        },
+        source: hd || regular,
+      });
     };
 
     addEvents(window, ['tap', 'click'], handler);
