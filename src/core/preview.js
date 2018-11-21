@@ -108,7 +108,18 @@ export class Previewer {
     $container.appendChild($imageContainer);
     // @for PC
     // @TODO bug for mobile, we donot expect it run on mobile
-    // addEvents($imageContainer, ['click'], this.togglePreview);
+    // @TODO only support mouse type, but does not work
+    addEvents($imageContainer, ['click', 'touchstart'], () => {
+      // Mouse event
+      // if (event.type === 'click' && event instanceof MouseEvent) {
+      //   alert(event.type);
+      //   this.togglePreview();
+      // }
+      // @TODO hack with userAgent, but want to use the event, help
+      if (!/mobile/i.test(window.navigator.userAgent)) {
+        this.togglePreview();
+      }
+    });
 
     // @4 $maskContainer
     const $maskContainer = this.$maskContainer = document.createElement('div');
@@ -216,11 +227,9 @@ export class Previewer {
   }
 
   togglePreview = ($image, src) => {
-    if (this.lastPreviewedAt) {
-      const delta = Date.now() - this.lastPreviewedAt;
-      if (delta < 300) {
-        return false;
-      }
+    if (this.lastPreviewedAt && Date.now() - this.lastPreviewedAt < 300) {
+      this.lastPreviewedAt = Date.now();
+      return false;
     }
     
     this.lastPreviewedAt = Date.now();
