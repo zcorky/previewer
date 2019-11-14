@@ -226,13 +226,13 @@ export class Previewer {
     document.body.appendChild($container);
 
     //
-    addEvents($('.toolbox .lake-pswp-arrow-left'), ['click', 'tap'], this.previewPrevious);
-    addEvents($('.toolbox .lake-pswp-arrow-right'), ['click', 'tap'], this.previewNext);
-    addEvents($('.lake-pswp-zoom-in'), ['click', 'tap'], this.zoomIn);
-    addEvents($('.lake-pswp-zoom-out'), ['click', 'tap'], this.zoomOut);
-    addEvents($('.lake-pswp-rotate-left'), ['click', 'tap'], this.rotateLeft);
-    addEvents($('.lake-pswp-rotate-right'), ['click', 'tap'], this.rotateRight);
-    addEvents($('.lake-pswp-origin-size'), ['click', 'tap'], this.reset);
+    addEvents($('.toolbox .lake-pswp-arrow-left'), ['click'], this.previewPrevious);
+    addEvents($('.toolbox .lake-pswp-arrow-right'), ['click'], this.previewNext);
+    addEvents($('.lake-pswp-zoom-in'), ['click'], this.zoomIn);
+    addEvents($('.lake-pswp-zoom-out'), ['click'], this.zoomOut);
+    addEvents($('.lake-pswp-rotate-left'), ['click'], this.rotateLeft);
+    addEvents($('.lake-pswp-rotate-right'), ['click'], this.rotateRight);
+    addEvents($('.lake-pswp-origin-size'), ['click'], this.reset);
     // addEvents($('.lake-pswp-best-size'), ['click', 'tap'], this.reset);
 
     return {
