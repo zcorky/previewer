@@ -15,9 +15,14 @@ import { createLoading } from './utils/loading';
 // const Transform = require('../lib/transform');
 // const To = require('../lib/to');
 
+const MAX_SCALE = 5;
+const MIN_SCALE = 0.1;
+
 export class Previewer {
   previewing = false;
   lastPreviewedAt = null;
+  stepCurrent = 1;
+  allSteps = 1;
 
   constructor() {
     this.render();
@@ -42,6 +47,7 @@ export class Previewer {
 
     // @1 $container
     $container = this.$container = document.createElement('div');
+    $container.className = 'previewer';
     $container.setAttribute(name, 'true');
     setStyles($container, {
       position: 'fixed',
@@ -56,6 +62,8 @@ export class Previewer {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
+      //
+      // overflow: 'auto',
     });
 
     // @2 $style
@@ -91,11 +99,76 @@ export class Previewer {
         left: 50%;
         transform: translate3d(-50%, -50%, 0);
       }
+
+      .pswp * {
+        box-sizing: border-box;
+      }
+
+      .pswp-toolbar-content {
+        display: flex;
+        align-items: center;
+        background: #252525;
+        border-radius: 4px;
+        padding: 6px;
+      }
+
+      .pswp .lake-pswp-tool-bar .btn {
+        color: #D9D9D9;
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        padding: 6px;
+        margin: 0 6px;
+        border: 1px solid #383838;
+        border-radius: 2px;
+        cursor: pointer;
+
+        display: flex;
+        align-items: center;
+      }
+
+      .pswp .lake-pswp-tool-bar .lake-pswp-arrow-left,.lake-pswp-arrow-right {
+        padding: 8px;
+      }
+
+      .pswp .lake-pswp-tool-bar .pswp-toolbar-content .lake-pswp-counter {
+        user-select: none;
+        display: inline-block;
+        font-size: 16px;
+        vertical-align: top;
+        line-height: 34px;
+        color: #DEDEDE;
+        margin: 0 2px;
+      }
+
+      .pswp .lake-pswp-tool-bar .separation {
+        width: 1px;
+        margin: 0px 10px;
+        display: inline-block;
+        height: 20px;
+        border: 0.5px solid #383838;
+      }
+
+      .pswp .lake-pswp-tool-bar .btn.disable {
+        background: none;
+      }
+
+      .icon {
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.15em;
+        fill: currentColor;
+        overflow: hidden;
+      }
     `;
     $container.prepend($style);
 
+    const $imageContainerWrapper = document.createElement('div');
+    $imageContainerWrapper.className = 'previewer-image-container-wrapper';
+    
     // @3 $imageContainer
     const $imageContainer = this.$imageContainer = document.createElement('img');
+    $imageContainer.className = 'previewer-image-container';
     // $imageContainer.setAttribute('src', 'https://gpic.qpic.cn/gbar_pic/rqlh3lfegUYAvWGGNA8wyC5kly2PwLzONQsSatcxicqJOw0gz9MGmZg/1000');
     $imageContainer.setAttribute('rate', window.innerHeight / window.innerWidth);
     setStyles($imageContainer, {
@@ -105,7 +178,8 @@ export class Previewer {
       border: 'none',
     });
     this.createAlloyFinger($imageContainer);
-    $container.appendChild($imageContainer);
+    $imageContainerWrapper.appendChild($imageContainer);
+    $container.appendChild($imageContainerWrapper);
     // @for PC
     // @TODO bug for mobile, we donot expect it run on mobile
     // @TODO only support mouse type, but does not work
@@ -140,9 +214,26 @@ export class Previewer {
     const $loadingContainer = this.$loading = createLoading();
     $container.appendChild($loadingContainer);
 
+    // @6 add toolbox
+    const $toolbox = this.createToolBox();
+    $container.appendChild($toolbox);
 
+    // @7 use icon font
+    this.useIconFontCN('//at.alicdn.com/t/font_1508774_ljmn8zvl2p.js');
+
+    //
     addEvents($maskContainer, ['click', 'tap'], this.togglePreview);
     document.body.appendChild($container);
+
+    //
+    addEvents($('.toolbox .lake-pswp-arrow-left'), ['click', 'tap'], this.previewPrevious);
+    addEvents($('.toolbox .lake-pswp-arrow-right'), ['click', 'tap'], this.previewNext);
+    addEvents($('.lake-pswp-zoom-in'), ['click', 'tap'], this.zoomIn);
+    addEvents($('.lake-pswp-zoom-out'), ['click', 'tap'], this.zoomOut);
+    addEvents($('.lake-pswp-rotate-left'), ['click', 'tap'], this.rotateLeft);
+    addEvents($('.lake-pswp-rotate-right'), ['click', 'tap'], this.rotateRight);
+    addEvents($('.lake-pswp-origin-size'), ['click', 'tap'], this.reset);
+    // addEvents($('.lake-pswp-best-size'), ['click', 'tap'], this.reset);
 
     return {
       $box: $container,
@@ -151,6 +242,80 @@ export class Previewer {
       $loading: $loadingContainer,
     };
   }
+
+  getAllPreviewNodes = () => {
+    return Array.prototype.slice.call(document.querySelectorAll('[data-preview="true"]'));
+  }
+
+  setSteps = (node) => {
+    const all = this.getAllPreviewNodes();
+    const index = all.indexOf(node);
+    
+    this.stepCurrent = index + 1;
+    this.allSteps = all.length;
+  }
+
+  useIconFontCN(scriptUrl) {
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    document.head.appendChild(script);
+  }
+
+  createIcon = (name) => {
+    return `
+      <svg class="icon" aria-hidden="true">
+        <use xlink:href="#previewer-${name}"></use>
+      </svg>
+    `;
+  };
+
+  createToolBox = () => {
+    const element = document.createElement('div') || document.querySelector('.toolbox.pswp');
+    element.className = 'toolbox pswp';
+    element.style = 'position: fixed; bottom:0;left:50%;transform:translateX(-50%);padding:12px;';
+    element.innerHTML = `
+      <div class="lake-pswp-tool-bar">
+        <div class="pswp-toolbar-content">
+          <span class="lake-pswp-arrow-left btn default">
+            ${this.createIcon('go-left')}
+          </span>
+          <span class="lake-pswp-counter">${this.stepCurrent} / ${this.allSteps}</span>
+          <span class="lake-pswp-arrow-right btn default">
+            ${this.createIcon('go-right')}
+          </span>
+          <span class="separation"></span>
+          <span class="lake-pswp-zoom-in btn default">
+            ${this.createIcon('zoom-in')}
+          </span>
+          <span class="lake-pswp-zoom-out btn default">
+            ${this.createIcon('zoom-out')}
+          </span>
+          <span class="lake-pswp-origin-size btn activated">
+            ${this.createIcon('1v1')}
+          </span>
+          <span class="lake-pswp-rotate-left btn default">
+            ${this.createIcon('rotate-left')}
+          </span>
+          <span class="lake-pswp-rotate-right btn default">
+            ${this.createIcon('rotate-right')}
+          </span>
+          <!-- <span class="lake-pswp-best-size btn disable">
+          ${this.createIcon('fullscreen')}
+        </span> -->
+        </div>
+      </div>
+    `;
+
+    return element;
+  }
+
+  updateToolBox = () => {
+    const $counter = $('.toolbox .lake-pswp-counter');
+
+    if (!$counter) return ;
+
+    $counter.textContent = `${this.stepCurrent} / ${this.allSteps}`;
+  };
 
   createAlloyFinger = ($image) => {
     Transform($image);
@@ -186,7 +351,7 @@ export class Previewer {
           new To($image, 'scaleY', 5, 500, ease);
         }
         var rotation = $image.rotateZ % 360;
-        if (rotation < 0)rotation = 360 + rotation;
+        if (rotation < 0) rotation = 360 + rotation;
         $image.rotateZ = rotation;
         if (rotation > 0 && rotation < 45) {
           new To($image, 'rotateZ', 0, 500, ease);
@@ -267,7 +432,7 @@ export class Previewer {
     //   [max]: '100%',
     //   [auto]: 'auto',
     // });
-  
+
     // @async
     this.loadImage(source, loadedSrc => {
       $imageContainer.setAttribute('src', loadedSrc);
@@ -283,7 +448,7 @@ export class Previewer {
     const { $box } = this.getContainer();
     this.bodyScroll.enable();
     this.reset();
-    
+
     setStyles($box, {
       'animation-name': 'easehide',
     });
@@ -300,11 +465,93 @@ export class Previewer {
     addEvents($box, ['animationend'], handleEaseHide);
   }
 
+  previewNext = () => {
+    this.stepCurrent += 1;
+    if (this.stepCurrent > this.allSteps) {
+      this.stepCurrent = 1;
+    }
+
+    const nextIndex = this.stepCurrent - 1;
+    const $element = this.getAllPreviewNodes()[nextIndex];
+
+    this.updateToolBox();
+    
+    const { max, auto } = maxImage($element);
+
+    const regular = $element.src || $element.getAttribute('data-src');
+    const hd = $element.getAttribute('data-hd'); // support hd image
+
+    this.reset();
+
+    this.preview({
+      styles: {
+        // detect width/height, which is bigger, then set 100%
+        [max]: '100%',
+        [auto]: 'auto',
+      },
+      source: hd || regular,
+    });
+  };
+
+  previewPrevious = () => {
+    this.stepCurrent -= 1;
+    if (this.stepCurrent <= 0) {
+      this.stepCurrent = this.allSteps;
+    }
+
+    const prevIndex = this.stepCurrent - 1;
+    const $element = this.getAllPreviewNodes()[prevIndex];
+
+    this.updateToolBox();
+    
+    const { max, auto } = maxImage($element);
+
+    const regular = $element.src || $element.getAttribute('data-src');
+    const hd = $element.getAttribute('data-hd'); // support hd image
+
+    this.reset();
+
+    this.preview({
+      styles: {
+        // detect width/height, which is bigger, then set 100%
+        [max]: '100%',
+        [auto]: 'auto',
+      },
+      source: hd || regular,
+    });
+  };
+
+  zoomIn = () => {
+    const { $image: $imageContainer } = this.getContainer();
+
+    this.zoom($imageContainer.scaleX * 2);
+  }
+
+  zoomOut = () => {
+    const { $image: $imageContainer } = this.getContainer();
+
+    this.zoom($imageContainer.scaleX * 0.5);
+  }
+
+  rotateLeft = () => {
+    const { $image: $imageContainer } = this.getContainer();
+    const originRotateZ = $imageContainer.rotateZ;
+    const rotateZ = Math.ceil(originRotateZ / 90) * 90 - 90;
+    this.rotate(rotateZ);
+  }
+
+  rotateRight = () => {
+    const { $image: $imageContainer } = this.getContainer();
+    const originRotateZ = $imageContainer.rotateZ;
+    const rotateZ = Math.ceil(originRotateZ / 90) * 90 + 90;
+    this.rotate(rotateZ);
+  }
+
   zoom = (scale) => {
     const { $image: $imageContainer } = this.getContainer();
 
     To.stopAll();
-    if ($imageContainer.scaleX > 1.5) {
+    if ($imageContainer.scaleX > MAX_SCALE || $imageContainer.scaleX < MIN_SCALE) {
       new To($imageContainer, 'scaleX', 1, 500, ease);
       new To($imageContainer, 'scaleY', 1, 500, ease);
       new To($imageContainer, 'translateX', 0, 500, ease);
@@ -317,22 +564,29 @@ export class Previewer {
     }
   }
 
+  rotate = (angle) => {
+    const { $image: $imageContainer } = this.getContainer();
+
+    To.stopAll();
+    new To($imageContainer, 'rotateZ', angle, 500, ease);
+  }
+
   checkBoundary = (deltaX = 0, deltaY = 0) => {
     const { $image } = this.getContainer();
     const { scaleX, translateX, translateY, originX, originY, width, height } = $image;
     const rate = $image.getAttribute('rate');
 
-    if(scaleX !== 1 || scaleX !== rate){
+    if (scaleX !== 1 || scaleX !== rate) {
       // include long picture
       const rangeLeft = (scaleX - 1) * (width / 2 + originX) + originX;
       const rangeRight = -(scaleX - 1) * (width / 2 - originX) + originX;
       const rangeUp = (scaleX - 1) * (height / 2 + originY) + originY;
       const rangeDown = -(scaleX - 1) * (height / 2 - originY) + originY;
 
-      if(translateX + deltaX <= rangeLeft
-          && translateX + deltaX >= rangeRight
-          && translateY + deltaY <= rangeUp
-          && translateY + deltaY >= rangeDown ) {
+      if (translateX + deltaX <= rangeLeft
+        && translateX + deltaX >= rangeRight
+        && translateY + deltaY <= rangeUp
+        && translateY + deltaY >= rangeDown) {
         return true;
       }
     }
@@ -367,14 +621,18 @@ export class Previewer {
     }
   }
 
-  render() {
+  render = () => {
     this.bodyScroll = createBodyScrollable();
 
     const handler = event => {
       const $element = event.target;
       if (!$element.hasAttribute('data-preview')) return false;
-      const regular = $element.src;
+      const regular = $element.src || $element.getAttribute('data-src');
       if (!regular) return false;
+
+
+      this.setSteps($element);
+      this.updateToolBox();
 
       const { max, auto } = maxImage($element);
       const hd = $element.getAttribute('data-hd'); // support hd image
@@ -382,7 +640,7 @@ export class Previewer {
       this.togglePreview({
         styles: {
           // detect width/height, which is bigger, then set 100%
-          [max]: '100%', 
+          [max]: '100%',
           [auto]: 'auto',
         },
         source: hd || regular,

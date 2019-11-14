@@ -23,7 +23,7 @@
       };
 }());
 
-var To = function (el, property, value, time, ease, onEnd,onChange ) {
+var To = function (el, property, value, time, ease, onEnd, onChange) {
   var current = el[property];
   var dv = value - current;
   var beginTime = new Date();
@@ -41,7 +41,7 @@ var To = function (el, property, value, time, ease, onEnd,onChange ) {
           return;
       }
       el[property] = dv * currentEase(dt / time) + current;
-      self.tickID=requestAnimationFrame(toTick);
+      self.tickID = requestAnimationFrame(toTick);
       //self.tickID = requestAnimationFrame(toTick);
       //cancelAnimationFrame±ØÐëÔÚ tickID = requestAnimationFrame(toTick);µÄºóÃæ
       onChange && onChange(el[property]);

@@ -23,8 +23,8 @@ const innerHTML = `
 }
 </style>
 <svg class="zcorky-wrapper" viewBox="-25 -25 50 50">
-  <circle cx="0" cy="0" r="20" stroke="#4197ff" fill="none" stroke-width="3px" style="opacity: 0.4"></circle>
-  <circle cx="0" cy="0" r="20" stroke="#4197ff" fill="none" stroke-width="3px" stroke-dasharray="20 150" class="rotate"></circle>
+  <circle cx="0" cy="0" r="20" stroke="#f0f0f0" fill="none" stroke-width="3px" style="opacity: 0.4"></circle>
+  <circle cx="0" cy="0" r="20" stroke="#f0f0f0" fill="none" stroke-width="3px" stroke-dasharray="20 150" class="rotate"></circle>
 </svg>
 `;
 
