@@ -1,10 +1,12 @@
 import styles from './index.css';
 
 // import Previewer from '../../../src/core/index';
-import '../../../src/';
+import previewer from '../../../src/';
 // import '../utils/debug';
 
 // new Previewer();
+
+window.previewer = previewer;
 
 export default function() {
   return (
