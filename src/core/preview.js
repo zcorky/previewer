@@ -8,12 +8,8 @@ import AlloyFinger from '../lib/alloyfinger';
 import Transform from '../lib/transform';
 import To from '../lib/to';
 
-import { maxImage, ease, createBodyScrollable } from './utils/utils';
-import { createLoading } from './utils/loading';
-
-// const AlloyFinger = require('../lib/alloyfinger');
-// const Transform = require('../lib/transform');
-// const To = require('../lib/to');
+import { maxImage, ease, createBodyScrollable } from '../utils/utils';
+import { createLoading } from '../utils/loading';
 
 const MAX_SCALE = 5;
 const MIN_SCALE = 0.1;
@@ -21,6 +17,7 @@ const MIN_SCALE = 0.1;
 export class Previewer {
   previewing = false;
   lastPreviewedAt = null;
+  urls = [];
   stepCurrent = 1;
   allSteps = 1;
 
@@ -28,9 +25,28 @@ export class Previewer {
     this.render();
   }
 
+  previewable($element) {
+    if (!$element.hasAttribute('data-preview')) return false;
+    const source = this.getSource($element);
+    if (!source) return false;
+    return true;
+  }
+
   getElement = (selector) => {
     return $(selector);
   }
+
+  getOriginElement = (url) => {
+    return $(`img[src="${url}"]`)
+    || $(`img[data-src="${url}"]`)
+    || $(`img[data-hd="${url}"]`);
+  }
+
+  getSource = ($element) => {
+    return $element.src
+      || $element.getAttribute('data-src')
+      || $element.getAttribute('data-hd');
+  };
 
   getContainer = () => {
     const name = 'data-preview-container';
@@ -139,6 +155,7 @@ export class Previewer {
         line-height: 34px;
         color: #DEDEDE;
         margin: 0 2px;
+        min-width: 37px;
       }
 
       .pswp .lake-pswp-tool-bar .separation {
@@ -243,16 +260,23 @@ export class Previewer {
     };
   }
 
-  getAllPreviewNodes = () => {
-    return Array.prototype.slice.call(document.querySelectorAll('[data-preview="true"]'));
+  setUrls = (urls) => {
+    this.urls = urls || [];
   }
 
-  setSteps = (node) => {
-    const all = this.getAllPreviewNodes();
-    const index = all.indexOf(node);
+  setSteps = (url) => {
+    const urls = this.urls;
+    const index = urls.indexOf(url);
+
+    if (index === -1) {
+      this.setUrls([url]);
+      this.stepCurrent = 1;
+      this.allSteps = 1;
+      return ;
+    }
     
     this.stepCurrent = index + 1;
-    this.allSteps = all.length;
+    this.allSteps = urls.length;
   }
 
   useIconFontCN(scriptUrl) {
@@ -407,9 +431,15 @@ export class Previewer {
   }
 
   preview = (options) => {
-    if (!options) return alert('preview with no options, it needs { styles, source }');
+    // if (!options) return alert('preview with no options, it needs { styles?: {}, source?: string, index?: number }');
 
-    const { styles, source } = options || {};
+    const { styles, source, index = 0 } = options || {};
+    const _source = source || this.urls[index];
+
+    if (!_source) {
+      return alert('No image source provided.');
+    }
+
     this.previewing = true;
     const { $box, $image: $imageContainer, $loading } = this.getContainer();
     this.bodyScroll.disable();
@@ -433,10 +463,29 @@ export class Previewer {
     //   [auto]: 'auto',
     // });
 
+    // update tool box
+    this.setSteps(_source);
+    this.updateToolBox();
+
     // @async
-    this.loadImage(source, loadedSrc => {
+    this.loadImage(_source, loadedSrc => {
       $imageContainer.setAttribute('src', loadedSrc);
-      setStyles($imageContainer, styles);
+
+      if (!styles) {
+        const $originElement = this.getOriginElement(_source);
+
+        if ($originElement) {
+          const { max, auto } = maxImage($originElement);
+
+          setStyles($imageContainer, {
+            [max]: '100%',
+            [auto]: 'auto',
+          });
+        }
+      } else {
+        setStyles($imageContainer, styles);
+      }
+
       setStyles($loading, {
         display: 'none',
       });
@@ -472,24 +521,11 @@ export class Previewer {
     }
 
     const nextIndex = this.stepCurrent - 1;
-    const $element = this.getAllPreviewNodes()[nextIndex];
-
-    this.updateToolBox();
-    
-    const { max, auto } = maxImage($element);
-
-    const regular = $element.src || $element.getAttribute('data-src');
-    const hd = $element.getAttribute('data-hd'); // support hd image
+    const url = this.urls[nextIndex];
 
     this.reset();
-
     this.preview({
-      styles: {
-        // detect width/height, which is bigger, then set 100%
-        [max]: '100%',
-        [auto]: 'auto',
-      },
-      source: hd || regular,
+      source: url, // hd || regular,
     });
   };
 
@@ -500,24 +536,12 @@ export class Previewer {
     }
 
     const prevIndex = this.stepCurrent - 1;
-    const $element = this.getAllPreviewNodes()[prevIndex];
-
-    this.updateToolBox();
-    
-    const { max, auto } = maxImage($element);
-
-    const regular = $element.src || $element.getAttribute('data-src');
-    const hd = $element.getAttribute('data-hd'); // support hd image
+    const url = this.urls[prevIndex];
 
     this.reset();
 
     this.preview({
-      styles: {
-        // detect width/height, which is bigger, then set 100%
-        [max]: '100%',
-        [auto]: 'auto',
-      },
-      source: hd || regular,
+      source: url, // hd || regular,
     });
   };
 
@@ -626,16 +650,21 @@ export class Previewer {
 
     const handler = event => {
       const $element = event.target;
-      if (!$element.hasAttribute('data-preview')) return false;
-      const regular = $element.src || $element.getAttribute('data-src');
-      if (!regular) return false;
+      if (!this.previewable($element)) {
+        return false;
+      }
 
+      if (!this.urls || !this.urls.length) {
+        const $elements = Array.prototype
+          .slice.call(document.querySelectorAll('[data-preview="true"]'));
+        const urls = $elements.map($element => {
+          return this.getSource($element);
+        });
+        this.setUrls(urls);
+      }
 
-      this.setSteps($element);
-      this.updateToolBox();
-
+      const source = this.getSource($element);
       const { max, auto } = maxImage($element);
-      const hd = $element.getAttribute('data-hd'); // support hd image
 
       this.togglePreview({
         styles: {
@@ -643,7 +672,7 @@ export class Previewer {
           [max]: '100%',
           [auto]: 'auto',
         },
-        source: hd || regular,
+        source,
       });
     };
 

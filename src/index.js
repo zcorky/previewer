@@ -2,4 +2,6 @@ import Previewer from './core/index';
 
 // export default Previewer;
 
-new Previewer();
+export const previewer = new Previewer();
+
+export default previewer;
