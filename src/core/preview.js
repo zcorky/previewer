@@ -524,6 +524,7 @@ export class Previewer {
     const url = this.urls[nextIndex];
 
     this.reset();
+
     this.preview({
       source: url, // hd || regular,
     });
@@ -626,13 +627,15 @@ export class Previewer {
     if ($imageContainer.scaleX !== 1
       || $imageContainer.scaleY !== 1
       || $imageContainer.translateX !== 0
-      || $imageContainer.translateY !== 0) {
+      || $imageContainer.translateY !== 0
+      || $imageContainer.translateZ !== 0) {
       new To($imageContainer, 'scaleX', 1, 500, ease);
       new To($imageContainer, 'scaleY', 1, 500, ease);
       new To($imageContainer, 'translateX', 0, 500, ease);
       new To($imageContainer, 'translateY', 0, 500, ease);
       new To($imageContainer, 'rotateX', 0, 500, ease);
       new To($imageContainer, 'rotateY', 0, 500, ease);
+      new To($imageContainer, 'rotateZ', 0, 500, ease);
     } else {
       setTimeout(() => {
         To.reset($imageContainer, 'scaleX', 1);
@@ -641,6 +644,7 @@ export class Previewer {
         To.reset($imageContainer, 'translateY', 0);
         To.reset($imageContainer, 'rotateX', 0);
         To.reset($imageContainer, 'rotateY', 0);
+        To.reset($imageContainer, 'rotateZ', 0);
       }, 250);
     }
   }
