@@ -125,6 +125,12 @@ export class Previewer {
         display: flex;
         align-items: center;
         background: #252525;
+      }
+
+      .pswp-toolbar-content .group {
+        display: flex;
+        align-items: center;
+        background: #252525;
         border-radius: 4px;
         padding: 6px;
       }
@@ -223,6 +229,21 @@ export class Previewer {
       //     opacity: 1;
       //   }
       // }
+
+      @media (max-width: 600px) {
+        .pswp-toolbar-content {
+          background: transparent;
+          flex-flow: column wrap;
+        }
+
+        .pswp-toolbar-content .separation {
+          display: none !important;
+        }
+
+        .pswp-toolbar-content .group {
+          margin-bottom: 6px;
+        }
+      }
     `;
     $container.prepend($style);
 
@@ -382,29 +403,33 @@ export class Previewer {
     element.innerHTML = `
       <div class="lake-pswp-tool-bar">
         <div class="pswp-toolbar-content">
-          <span class="lake-pswp-arrow-left btn default">
-            ${this.createIcon('go-left')}
-          </span>
-          <span class="lake-pswp-counter">${this.stepCurrent} / ${this.allSteps}</span>
-          <span class="lake-pswp-arrow-right btn default">
-            ${this.createIcon('go-right')}
-          </span>
+          <div class="group">
+            <span class="lake-pswp-arrow-left btn default">
+              ${this.createIcon('go-left')}
+            </span>
+            <span class="lake-pswp-counter">${this.stepCurrent} / ${this.allSteps}</span>
+            <span class="lake-pswp-arrow-right btn default">
+              ${this.createIcon('go-right')}
+            </span>
+          </div>
           <span class="separation"></span>
-          <span class="lake-pswp-zoom-in btn default">
-            ${this.createIcon('zoom-in')}
-          </span>
-          <span class="lake-pswp-zoom-out btn default">
-            ${this.createIcon('zoom-out')}
-          </span>
-          <span class="lake-pswp-origin-size btn activated">
-            ${this.createIcon('1v1')}
-          </span>
-          <span class="lake-pswp-rotate-left btn default">
-            ${this.createIcon('rotate-left')}
-          </span>
-          <span class="lake-pswp-rotate-right btn default">
-            ${this.createIcon('rotate-right')}
-          </span>
+          <div class="group">
+            <span class="lake-pswp-zoom-in btn default">
+              ${this.createIcon('zoom-in')}
+            </span>
+            <span class="lake-pswp-zoom-out btn default">
+              ${this.createIcon('zoom-out')}
+            </span>
+            <span class="lake-pswp-origin-size btn activated">
+              ${this.createIcon('1v1')}
+            </span>
+            <span class="lake-pswp-rotate-left btn default">
+              ${this.createIcon('rotate-left')}
+            </span>
+            <span class="lake-pswp-rotate-right btn default">
+              ${this.createIcon('rotate-right')}
+            </span>
+          </div>
           <!-- <span class="lake-pswp-best-size btn disable">
           ${this.createIcon('fullscreen')}
         </span> -->
