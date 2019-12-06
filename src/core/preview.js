@@ -209,11 +209,23 @@ export class Previewer {
       .previewer:hover .close {
         opacity: 1;
       }
+
+      // @media (min-width: 1024px) {
+      //   .previewer .close {
+      //     opacity: 1;
+      //   }
+      // }
     `;
     $container.prepend($style);
 
     const $imageContainerWrapper = document.createElement('div');
     $imageContainerWrapper.className = 'previewer-image-container-wrapper';
+    setStyles($imageContainerWrapper, {
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    });
     
     // @3 $imageContainer
     const $imageContainer = this.$imageContainer = document.createElement('img');

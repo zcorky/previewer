@@ -252,7 +252,6 @@ AlloyFinger.prototype = {
             changedTouches = [evt];
         }
 
-        console.log('end: ', touches, changedTouches);
         if (!changedTouches) {
             return ;
         }
