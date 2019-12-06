@@ -206,7 +206,15 @@ export class Previewer {
         cursor: pointer;
       }
 
+      .previewer .toolbox {
+        opacity: 0;
+      }
+
       .previewer:hover .close {
+        opacity: 1;
+      }
+
+      .previewer:hover .toolbox {
         opacity: 1;
       }
 
@@ -370,7 +378,7 @@ export class Previewer {
   createToolBox = () => {
     const element = document.createElement('div') || document.querySelector('.toolbox.pswp');
     element.className = 'toolbox pswp';
-    element.style = 'position: fixed; bottom:0;left:50%;transform:translateX(-50%);padding:12px;';
+    element.style = 'position: fixed; bottom:0;left:50%;transform:translateX(-50%);padding:12px;transition:all .3s;';
     element.innerHTML = `
       <div class="lake-pswp-tool-bar">
         <div class="pswp-toolbar-content">
