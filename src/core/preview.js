@@ -11,6 +11,8 @@ import To from '../lib/to';
 import { maxImage, ease, createBodyScrollable } from '../utils/utils';
 import { createLoading } from '../utils/loading';
 
+import { download } from '../utils/download';
+
 const MAX_SCALE = 5;
 const MIN_SCALE = 0.1;
 
@@ -792,5 +794,10 @@ export class Previewer {
     };
 
     addEvents(window, ['tap', 'click'], handler);
+  }
+
+  // others
+  async download(options) {
+    await download(options.url, options);
   }
 }
