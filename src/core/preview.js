@@ -225,6 +225,7 @@ export class Previewer {
       // height: 200,
       // backgroundColor: 'rgba(255, 255, 255, 0.78)',
       border: 'none',
+      cursor: 'move',
     });
     this.createAlloyFinger($imageContainer);
     $imageContainerWrapper.appendChild($imageContainer);
@@ -232,17 +233,17 @@ export class Previewer {
     // @for PC
     // @TODO bug for mobile, we donot expect it run on mobile
     // @TODO only support mouse type, but does not work
-    addEvents($imageContainer, ['click', 'touchstart'], () => {
-      // Mouse event
-      // if (event.type === 'click' && event instanceof MouseEvent) {
-      //   alert(event.type);
-      //   this.togglePreview();
-      // }
-      // @TODO hack with userAgent, but want to use the event, help
-      if (!/mobile/i.test(window.navigator.userAgent)) {
-        this.togglePreview();
-      }
-    });
+    // addEvents($imageContainer, ['click', 'touchstart'], () => {
+    //   // Mouse event
+    //   // if (event.type === 'click' && event instanceof MouseEvent) {
+    //   //   alert(event.type);
+    //   //   this.togglePreview();
+    //   // }
+    //   // @TODO hack with userAgent, but want to use the event, help
+    //   if (!/mobile/i.test(window.navigator.userAgent)) {
+    //     this.togglePreview();
+    //   }
+    // });
 
     // @4 $maskContainer
     const $maskContainer = this.$maskContainer = document.createElement('div');
@@ -279,6 +280,9 @@ export class Previewer {
     document.body.appendChild($container);
 
     //
+    addEvents($imageContainer, ['click'], event => {
+      event.stopPropagation();
+    });
     addEvents($('.previewer .toolbox .lake-pswp-arrow-left'), ['click'], this.previewPrevious);
     addEvents($('.previewer .toolbox .lake-pswp-arrow-right'), ['click'], this.previewNext);
     addEvents($('.previewer .lake-pswp-zoom-in'), ['click'], this.zoomIn);
