@@ -78,6 +78,7 @@ export class Previewer {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
+      transition: 'all .3s',
       //
       // overflow: 'auto',
     });
@@ -258,6 +259,18 @@ export class Previewer {
       $mask: $maskContainer,
       $loading: $loadingContainer,
     };
+  }
+
+  setContainerStyles(attributes) {
+    if (attributes) {
+      setStyles(this.$container, attributes);
+    }
+  }
+
+  setImageStyles(attributes) {
+    if (attributes) {
+      setStyles(this.$image, attributes);
+    }
   }
 
   setUrls = (urls) => {
