@@ -171,12 +171,43 @@ export class Previewer {
         background: none;
       }
 
-      .icon {
+      .previewer .icon {
         width: 1em;
         height: 1em;
         vertical-align: -0.15em;
         fill: currentColor;
         overflow: hidden;
+      }
+
+      .previewer .close {
+        position: fixed;
+        top: 32px;
+        right: 32px;
+        width: 40px;
+        height: 40px;
+
+        color: #fff;
+        font-size: 20px;
+
+        background-color: #3c3c3c;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        transition: all .3s;
+
+        opacity: 0;
+
+        border-radius: 2px;
+      }
+
+      .previewer .close:hover {
+        cursor: pointer;
+      }
+
+      .previewer:hover .close {
+        opacity: 1;
       }
     `;
     $container.prepend($style);
@@ -236,22 +267,27 @@ export class Previewer {
     const $toolbox = this.createToolBox();
     $container.appendChild($toolbox);
 
+    // @6.1 add close
+    const $close = this.createClose();
+    $container.appendChild($close);
+
     // @7 use icon font
-    this.useIconFontCN('//at.alicdn.com/t/font_1508774_ljmn8zvl2p.js');
+    this.useIconFontCN('//at.alicdn.com/t/font_1508774_y6eqn0d1ta.js');
 
     //
     addEvents($maskContainer, ['click', 'tap'], this.togglePreview);
     document.body.appendChild($container);
 
     //
-    addEvents($('.toolbox .lake-pswp-arrow-left'), ['click'], this.previewPrevious);
-    addEvents($('.toolbox .lake-pswp-arrow-right'), ['click'], this.previewNext);
-    addEvents($('.lake-pswp-zoom-in'), ['click'], this.zoomIn);
-    addEvents($('.lake-pswp-zoom-out'), ['click'], this.zoomOut);
-    addEvents($('.lake-pswp-rotate-left'), ['click'], this.rotateLeft);
-    addEvents($('.lake-pswp-rotate-right'), ['click'], this.rotateRight);
-    addEvents($('.lake-pswp-origin-size'), ['click'], this.reset);
+    addEvents($('.previewer .toolbox .lake-pswp-arrow-left'), ['click'], this.previewPrevious);
+    addEvents($('.previewer .toolbox .lake-pswp-arrow-right'), ['click'], this.previewNext);
+    addEvents($('.previewer .lake-pswp-zoom-in'), ['click'], this.zoomIn);
+    addEvents($('.previewer .lake-pswp-zoom-out'), ['click'], this.zoomOut);
+    addEvents($('.previewer .lake-pswp-rotate-left'), ['click'], this.rotateLeft);
+    addEvents($('.previewer .lake-pswp-rotate-right'), ['click'], this.rotateRight);
+    addEvents($('.previewer .lake-pswp-origin-size'), ['click'], this.reset);
     // addEvents($('.lake-pswp-best-size'), ['click', 'tap'], this.reset);
+    addEvents($('.previewer .close'), ['tap', 'click'], this.close);
 
     return {
       $box: $container,
@@ -305,6 +341,15 @@ export class Previewer {
       </svg>
     `;
   };
+
+  createClose = () => {
+    const element = document.createElement('span') || document.querySelector('.previewer.close');
+    element.className = 'close';
+    // element.style = '';
+    element.innerHTML = this.createIcon('close');
+
+    return element;
+  }
 
   createToolBox = () => {
     const element = document.createElement('div') || document.querySelector('.toolbox.pswp');
@@ -607,6 +652,10 @@ export class Previewer {
 
     To.stopAll();
     new To($imageContainer, 'rotateZ', angle, 500, ease);
+  }
+
+  close = () => {
+    this.unpreview();
   }
 
   checkBoundary = (deltaX = 0, deltaY = 0) => {
