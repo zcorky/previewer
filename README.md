@@ -7,14 +7,30 @@
 
 ## How to
 * 1 NPM
-* 2 script
+* 2 CDN: `<script src="https://unpkg.com/@zcorky/previewer/lib/index.umd.js"></script>`
 
 ```
-// NPM
+// Auto Collect Preview Images Intelligently
+// use NPM
 import '@zcorky/previewer';
 
-// CDN
+// use CDN
 <script src="https://unpkg.com/@zcorky/previewer/lib/index.umd.js"></script>
+```
+
+```
+// Preview Manually
+import { previewer } from '@zcorky/previewer';
+
+// Method One: Preview Many
+preview.setUrls([
+  'http://example.com/a.png',
+  'http://example.com/b.png',
+  'http://example.com/c.png',
+])
+
+// Method Two: Preview Single Image
+previewer.preview({ source: 'http://example.com/a.png' });
 ```
 
 ## 更新日志
