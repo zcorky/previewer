@@ -318,11 +318,11 @@ export class Previewer {
     // @7 use icon font
     this.useIconFontCN('//at.alicdn.com/t/font_1508774_y6eqn0d1ta.js');
 
-    //
+    // when click mask, close preview
     addEvents($maskContainer, ['click', 'tap'], this.togglePreview);
     document.body.appendChild($container);
 
-    //
+    // to avoid click image to toggle preview
     addEvents($imageContainer, ['click'], event => {
       event.stopPropagation();
     });
@@ -456,7 +456,7 @@ export class Previewer {
 
     const af = new AlloyFinger($image, {
       singleTap: () => {
-        this.togglePreview();
+        // this.togglePreview();
         // this.reset();
       },
       doubleTap: () => {
