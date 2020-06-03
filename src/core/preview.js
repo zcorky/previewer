@@ -561,9 +561,12 @@ export class Previewer {
 
     // @reset last image
     $imageContainer.setAttribute('src', '');
-    setStyles($loading, {
-      display: 'block',
-    });
+    let it = setTimeout(() => {
+      // load image show loading
+      setStyles($loading, {
+        display: 'block',
+      });
+    }, 300);
 
     // @sync
     // $imageContainer.setAttribute('src', src);
@@ -597,6 +600,12 @@ export class Previewer {
         setStyles($imageContainer, styles);
       }
 
+      // load image done
+      if (it) {
+        clearTimeout(it);
+        it = null;
+      }
+  
       setStyles($loading, {
         display: 'none',
       });
