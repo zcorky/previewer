@@ -1,6 +1,6 @@
 {
   "name": "@zcorky/previewer",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Simply image preview.",
   "main": "lib/index.js",
   "jsnext:main": "lib/index.esm.js",
