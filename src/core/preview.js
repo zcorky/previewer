@@ -533,8 +533,10 @@ export class Previewer {
     this.lastPreviewedAt = Date.now();
 
     if (!this.previewing && options) { // if options undefine, this maybe call from unpreview
+      addEvents(window, ['keydown'], this.keyboardLeftRight)
       this.preview(options);
     } else {
+      removeEvents(window, ['keydown'], this.keyboardLeftRight)
       this.unpreview();
     }
   }
@@ -794,6 +796,15 @@ export class Previewer {
     };
 
     addEvents(window, ['tap', 'click'], handler);
+  }
+
+  keyboardLeftRight = (event) => {
+    const keyCode = event.keyCode;
+    if (keyCode === 37) {
+      this.previewPrevious();
+    } else if (keyCode === 39) {
+      this.previewNext();
+    }
   }
 
   // others
