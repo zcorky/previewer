@@ -1,8 +1,8 @@
 import styles from './index.css';
 
 // import Previewer from '../../../src/core/index';
-// import previewer from '../../../src/';
-import { previewer } from '../../../lib/index';
+import previewer from '../../../src/';
+// import { previewer } from '../../../lib/index';
 // import '../utils/debug';
 
 // new Previewer();

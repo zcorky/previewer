@@ -533,10 +533,10 @@ export class Previewer {
     this.lastPreviewedAt = Date.now();
 
     if (!this.previewing && options) { // if options undefine, this maybe call from unpreview
-      addEvents(window, ['keydown'], this.keyboardLeftRight)
+      addEvents(window, ['keydown'], this.keyboardLeftRight);
       this.preview(options);
     } else {
-      removeEvents(window, ['keydown'], this.keyboardLeftRight)
+      removeEvents(window, ['keydown'], this.keyboardLeftRight);
       this.unpreview();
     }
   }
