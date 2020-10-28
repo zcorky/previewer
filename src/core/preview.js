@@ -76,7 +76,7 @@ export class Previewer {
       zIndex: 100000000,
       backgroundColor: '#000',
       overflow: 'hidden',
-      animation: 'easeshow .25s',
+      animation: 'easeshow .4s',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -89,20 +89,26 @@ export class Previewer {
     const $style = document.createElement('style');
     $style.innerHTML = `
       @keyframes easeshow {
-        0% {
+        from {
           opacity: 0;
+          transform: scale3d(0.3, 0.3, 0.3);
         }
 
-        100% {
+        50% {
           opacity: 1;
         }
       }
       @keyframes easehide {
-        0% {
+        from {
           opacity: 1;
         }
 
-        100% {
+        50% {
+          opacity: 0;
+          transform: scale3d(0.3, 0.3, 0.3);
+        }
+
+        to {
           opacity: 0;
         }
       }
