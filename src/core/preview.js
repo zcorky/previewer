@@ -262,6 +262,7 @@ export class Previewer {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
+      userSelect: 'none',
     });
     
     // @3 $imageContainer
