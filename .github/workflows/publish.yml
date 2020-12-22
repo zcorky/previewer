@@ -41,7 +41,7 @@ jobs:
         run: npm run test
 
       - name: Make Coverage
-        run: npm run coverage
+        run: npm run coverage --if-present
 
   publish:
     needs: build
