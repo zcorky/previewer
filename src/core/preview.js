@@ -16,6 +16,17 @@ import { download } from '../utils/download';
 const MAX_SCALE = 5;
 const MIN_SCALE = 0.1;
 
+const icons = {
+  'go-left': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32"><path fill="#fff" d="M21.67 27.788a.667.667 0 0 0 0-.942L9.415 14.589a.667.667 0 0 0-.943 0l-.943.943a.667.667 0 0 0 0 .943L19.785 28.73c.26.26.682.26.943 0l.942-.943Z" data-follow-fill="#fff"/><path fill="#fff" d="M20.728 3.275a.667.667 0 0 0-.943 0L7.528 15.532a.667.667 0 0 0 0 .943l.943.942c.26.26.683.26.943 0L21.67 5.162a.667.667 0 0 0 0-.943l-.943-.943Z" data-follow-fill="#fff"/></svg>`,
+  'go-right': `<svg xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 0 32 32"><path d="M10.195 27.788a.667.667 0 0 1 0-.942l12.257-12.257c.26-.26.682-.26.943 0l.942.943c.26.26.26.682 0 .943L12.081 28.73a.667.667 0 0 1-.943 0l-.943-.943Z" data-follow-fill="#fff"/><path d="M11.138 3.275c.26-.26.682-.26.943 0l12.256 12.257c.26.26.26.682 0 .943l-.942.942a.667.667 0 0 1-.943 0L10.195 5.162a.667.667 0 0 1 0-.943l.943-.943Z" data-follow-fill="#fff"/></svg>`,
+  'zoom-in': `<svg xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 0 32 32"><path d="M14.667 3.333C20.927 3.333 26 8.407 26 14.667c0 2.365-.725 4.562-1.965 6.38l4.522 4.521c.26.26.26.682 0 .943l-1.131 1.131a.667.667 0 0 1-.943 0L22.08 23.24A11.29 11.29 0 0 1 14.667 26c-6.26 0-11.334-5.073-11.334-11.332 0-6.26 5.075-11.334 11.334-11.334Zm0 2.8a8.533 8.533 0 1 0 0 17.067 8.533 8.533 0 0 0 0-17.067Z" data-follow-fill="#fff"/><path stroke-width="2" stroke="#fff" d="M14.7 10v9M19.2 14.5h-9" data-follow-stroke="#fff"/></svg>`,
+  'zoom-out': `<svg xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 0 32 32"><path d="M14.667 3.333C20.927 3.333 26 8.407 26 14.667c0 2.365-.725 4.562-1.965 6.38l4.522 4.521c.26.26.26.682 0 .943l-1.131 1.131a.667.667 0 0 1-.943 0L22.08 23.24A11.29 11.29 0 0 1 14.667 26c-6.26 0-11.334-5.073-11.334-11.332 0-6.26 5.075-11.334 11.334-11.334Zm0 2.8a8.533 8.533 0 1 0 0 17.067 8.533 8.533 0 0 0 0-17.067Z" data-follow-fill="#fff"/><path stroke-width="2" stroke="#fff" d="M19.2 14.5h-9" data-follow-stroke="#fff"/></svg>`,
+  '1v1': `<svg xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 0 32 32"><path d="M26.82 14.41h1.588c.892 0 1.592.7 1.592 1.59 0 .89-.7 1.59-1.592 1.59h-1.59a10.936 10.936 0 0 1-9.228 9.228v1.59C17.59 29.3 16.89 30 16 30a1.575 1.575 0 0 1-1.59-1.592v-1.59C9.636 26.12 5.88 22.3 5.18 17.59H3.59A1.576 1.576 0 0 1 2 16c0-.89.7-1.59 1.59-1.59h1.592a10.934 10.934 0 0 1 9.228-9.23V3.59c0-.89.7-1.59 1.59-1.59.89 0 1.59.7 1.59 1.59v1.592a10.934 10.934 0 0 1 9.228 9.228h.002Zm-9.866 9.926c3.82-.446 6.936-3.564 7.382-7.38A8.402 8.402 0 0 0 16 7.6a8.392 8.392 0 0 0-5.589 14.661 8.399 8.399 0 0 0 6.543 2.075ZM16 19.628a3.628 3.628 0 1 0 0-7.257 3.628 3.628 0 0 0 0 7.257Z" data-follow-fill="#fff"/></svg>`,
+  'rotate-left': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32"><mask fill="#fff" id="a" data-follow-fill="#fff"><rect rx="1" height="13" width="21" y="15" x="5"/></mask><rect mask="url(#a)" stroke-width="5" stroke="#fff" rx="1" height="13" width="21" y="15" x="5" data-follow-stroke="#fff"/><path stroke-width="2.5" stroke="#fff" d="M28.5 17V8h-12" data-follow-stroke="#fff"/><path stroke-width="2.5" stroke="#fff" d="m19 3-4 5.217L19 13" data-follow-stroke="#fff"/></svg>`,
+  'rotate-right': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32"><g clip-path="url(#a)"><mask height="13" width="21" y="15" x="6" maskUnits="userSpaceOnUse" style="mask-type:luminance" id="b"><path fill="#fff" d="M7 15h19a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V16a1 1 0 0 1 1-1Z" data-follow-fill="#fff"/></mask><g mask="url(#b)"><path stroke-width="5" stroke="#fff" d="M7 15h19a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V16a1 1 0 0 1 1-1Z" data-follow-stroke="#fff"/></g><path stroke-width="2.5" stroke="#fff" d="M3.5 17V8h12" data-follow-stroke="#fff"/><path stroke-width="2.5" stroke="#fff" d="m13 3 4 5.217L13 13" data-follow-stroke="#fff"/></g><defs><clipPath id="a"><path transform="matrix(-1 0 0 1 32 0)" fill="#fff" d="M0 0h32v32H0z" data-follow-fill="#fff"/></clipPath></defs></svg>`,
+  'close': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32"><path fill="#fff" d="M5.63 25.428a.667.667 0 0 1 0-.943L24.484 5.63c.26-.26.683-.26.943 0l.943.943c.26.26.26.682 0 .943L7.515 26.37a.667.667 0 0 1-.943 0l-.943-.943Z" data-follow-fill="#fff"/><path fill="#fff" d="M25.428 26.37a.667.667 0 0 1-.943 0L5.63 7.516a.667.667 0 0 1 0-.943l.943-.943c.26-.26.683-.26.943 0l18.856 18.856c.26.26.26.683 0 .943l-.943.943Z" data-follow-fill="#fff"/></svg>`,
+};
+
 export class Previewer {
   previewing = false;
   lastPreviewedAt = null;
@@ -159,7 +170,7 @@ export class Previewer {
       }
 
       .pswp .lake-pswp-tool-bar .lake-pswp-arrow-left,.lake-pswp-arrow-right {
-        padding: 8px;
+        // padding: 8px;
       }
 
       .pswp .lake-pswp-tool-bar .pswp-toolbar-content .lake-pswp-counter {
@@ -171,6 +182,12 @@ export class Previewer {
         color: #DEDEDE;
         margin: 0 2px;
         min-width: 37px;
+      }
+
+      .pswp .lake-pswp-tool-bar .pswp-toolbar-content .lake-pswp-counter .count {
+        display: inline-block;
+        width: 28px;
+        text-align: center;
       }
 
       .pswp .lake-pswp-tool-bar .separation {
@@ -197,8 +214,9 @@ export class Previewer {
         position: fixed;
         top: 32px;
         right: 32px;
-        width: 40px;
-        height: 40px;
+        width: 32px;
+        height: 32px;
+        padding: 8px;
 
         color: #fff;
         font-size: 20px;
@@ -389,11 +407,7 @@ export class Previewer {
   }
 
   createIcon = (name) => {
-    return `
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#previewer-${name}"></use>
-      </svg>
-    `;
+    return icons[name] || '';
   };
 
   createClose = () => {
@@ -416,7 +430,11 @@ export class Previewer {
             <span class="lake-pswp-arrow-left btn default">
               ${this.createIcon('go-left')}
             </span>
-            <span class="lake-pswp-counter">${this.stepCurrent} / ${this.allSteps}</span>
+            <span class="lake-pswp-counter">
+              <span class="count current">${this.stepCurrent}</span>
+              <span> / </span>
+              <span class="count total">${this.allSteps}</span>
+            </span>
             <span class="lake-pswp-arrow-right btn default">
               ${this.createIcon('go-right')}
             </span>
@@ -454,7 +472,11 @@ export class Previewer {
 
     if (!$counter) return ;
 
-    $counter.textContent = `${this.stepCurrent} / ${this.allSteps}`;
+    $counter.innerHTML = `
+      <span class="count current">${this.stepCurrent}</span>
+        <span> / </span>
+      <span class="count total">${this.allSteps}</span>
+    `;
   };
 
   createAlloyFinger = ($image) => {
